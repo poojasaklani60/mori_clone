@@ -1,85 +1,169 @@
-const products = [
-    {
-        id: 1,
-        title: "Char Dham Digital Scroll",
-        price: 599.00,
-        originalPrice: 799.00,
-        category: "Art & Decor",
-        image: "char_dham_scroll.png",
-        badge: "Sale"
-    },
-    {
-        id: 2,
-        title: "Colours of Pahad Puzzle",
-        price: 999.00,
-        originalPrice: null,
-        category: "Games & Entertainment",
-        image: "pahad_puzzle.png"
-    },
-    {
-        id: 3,
-        title: "Postcards (Set of 5)",
-        price: 119.00,
-        originalPrice: null,
-        category: "Art & Decor",
-        image: "postcards.png"
-    },
-    {
-        id: 4,
-        title: "SWAYAMBHU (Lord Brahma)",
-        price: 349.00,
-        originalPrice: null,
-        category: "Art & Decor",
-        image: "swayambhu_art.png"
-    }
+const services = [
+  {
+    id: crypto.randomUUID(),
+    title: 'On-demand Plumbing Fix',
+    provider: 'Ramesh Plumbing Co.',
+    category: 'Home Repair',
+    location: 'Lalitpur',
+    price: 1800,
+    rating: 4.8,
+    description: 'Leak repairs, bathroom fittings, and quick emergency visits.'
+  },
+  {
+    id: crypto.randomUUID(),
+    title: 'Math Tutor (Grade 8-12)',
+    provider: 'Sita Learning Hub',
+    category: 'Education',
+    location: 'Kathmandu',
+    price: 1200,
+    rating: 4.9,
+    description: 'Personalized classes for school and entrance preparation.'
+  },
+  {
+    id: crypto.randomUUID(),
+    title: 'Wedding Photography Package',
+    provider: 'Aayush Visuals',
+    category: 'Events',
+    location: 'Bhaktapur',
+    price: 25000,
+    rating: 4.7,
+    description: 'Full-day wedding and pre-wedding shoots with edited photos.'
+  },
+  {
+    id: crypto.randomUUID(),
+    title: 'Deep Home Cleaning',
+    provider: 'Sparkle Homes',
+    category: 'Cleaning',
+    location: 'Patan',
+    price: 3200,
+    rating: 4.6,
+    description: 'Kitchen, bathroom, and sofa cleaning with eco-safe products.'
+  }
 ];
 
-document.addEventListener('DOMContentLoaded', () => {
-    const productGrid = document.getElementById('productGrid');
+let openRequests = 0;
 
-    if (productGrid) {
-        products.forEach(product => {
+const elements = {
+  serviceGrid: document.getElementById('serviceGrid'),
+  searchInput: document.getElementById('searchInput'),
+  categoryFilter: document.getElementById('categoryFilter'),
+  locationFilter: document.getElementById('locationFilter'),
+  sortBy: document.getElementById('sortBy'),
+  sellForm: document.getElementById('sellForm'),
+  formMessage: document.getElementById('formMessage'),
+  activeListings: document.getElementById('activeListings'),
+  openRequests: document.getElementById('openRequests')
+};
 
-            const priceHtml = product.originalPrice
-                ? `<span class="product-price">₹${product.price.toFixed(2)}</span><span class="original-price">₹${product.originalPrice.toFixed(2)}</span>`
-                : `<span class="product-price">₹${product.price.toFixed(2)}</span>`;
+function populateLocationFilter() {
+  const locations = ['All', ...new Set(services.map((service) => service.location))].sort();
+  elements.locationFilter.innerHTML = locations
+    .map((location) => `<option value="${location}">${location}</option>`)
+    .join('');
+}
 
-            const badgeHtml = product.badge
-                ? `<div class="product-badge">${product.badge}</div>`
-                : '';
+function updateStats() {
+  elements.activeListings.textContent = services.length;
+  elements.openRequests.textContent = openRequests;
+}
 
-            const card = document.createElement('article');
-            card.className = 'product-card';
+function renderServices() {
+  const query = elements.searchInput.value.toLowerCase().trim();
+  const selectedCategory = elements.categoryFilter.value;
+  const selectedLocation = elements.locationFilter.value;
 
-            card.innerHTML = `
-        <div class="product-image">
-          ${badgeHtml}
-          <img src="${product.image}" alt="${product.title}" loading="lazy">
-        </div>
-        <div class="product-info">
-          <div class="product-category">${product.category}</div>
-          <h3 class="product-title">${product.title}</h3>
-          <div class="product-pricing">
-            ${priceHtml}
-          </div>
-          <button class="btn btn-primary" style="margin-top: 15px; width: 100%;" onclick="addToCart('${product.title}')">Add to Cart</button>
-        </div>
-      `;
-            productGrid.appendChild(card);
-        });
-    }
+  let filtered = services.filter((service) => {
+    const matchesQuery = [service.title, service.provider, service.description]
+      .join(' ')
+      .toLowerCase()
+      .includes(query);
+
+    return matchesQuery
+      && (selectedCategory === 'All' || service.category === selectedCategory)
+      && (selectedLocation === 'All' || service.location === selectedLocation);
+  });
+
+  if (elements.sortBy.value === 'price-low') filtered = filtered.sort((a, b) => a.price - b.price);
+  if (elements.sortBy.value === 'price-high') filtered = filtered.sort((a, b) => b.price - a.price);
+  if (elements.sortBy.value === 'rating') filtered = filtered.sort((a, b) => b.rating - a.rating);
+
+  if (!filtered.length) {
+    elements.serviceGrid.innerHTML = '<div class="empty-state">No services match your filters.</div>';
+    return;
+  }
+
+  elements.serviceGrid.innerHTML = filtered.map((service) => `
+    <article class="service-card">
+      <span class="service-chip">${service.category}</span>
+      <h4>${service.title}</h4>
+      <p class="meta">${service.provider} · ${service.location}</p>
+      <p class="meta">⭐ ${service.rating.toFixed(1)}</p>
+      <p class="meta">${service.description}</p>
+      <div class="card-footer">
+        <span class="price">NPR ${service.price.toLocaleString()}</span>
+        <button class="btn-primary" onclick="requestService('${service.id}')">Request</button>
+      </div>
+    </article>
+  `).join('');
+}
+
+function requestService(serviceId) {
+  const service = services.find((listing) => listing.id === serviceId);
+  if (!service) return;
+
+  openRequests += 1;
+  updateStats();
+  elements.formMessage.textContent = `Request sent to ${service.provider}.`;
+}
+
+function handleSellSubmit(event) {
+  event.preventDefault();
+
+  const listing = {
+    id: crypto.randomUUID(),
+    title: document.getElementById('title').value.trim(),
+    provider: document.getElementById('provider').value.trim(),
+    category: document.getElementById('category').value,
+    location: document.getElementById('location').value.trim(),
+    price: Number(document.getElementById('price').value),
+    rating: 5.0,
+    description: document.getElementById('description').value.trim()
+  };
+
+  services.unshift(listing);
+  elements.sellForm.reset();
+  elements.formMessage.textContent = `Published: "${listing.title}"`;
+
+  populateLocationFilter();
+  updateStats();
+  renderServices();
+}
+
+function wireTabs() {
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const screens = document.querySelectorAll('.tab-screen');
+
+  tabButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const target = button.dataset.target;
+      tabButtons.forEach((tab) => tab.classList.remove('active'));
+      screens.forEach((screen) => screen.classList.remove('active'));
+      button.classList.add('active');
+      document.getElementById(target).classList.add('active');
+    });
+  });
+}
+
+window.requestService = requestService;
+
+[elements.searchInput, elements.categoryFilter, elements.locationFilter, elements.sortBy].forEach((control) => {
+  control.addEventListener('input', renderServices);
+  control.addEventListener('change', renderServices);
 });
 
-let cartCount = 0;
-function addToCart(title) {
-    cartCount++;
-    const countEl = document.querySelector('.cart-count');
-    if (countEl) {
-        countEl.textContent = cartCount;
-        // Simple animation
-        countEl.style.transform = 'scale(1.5)';
-        setTimeout(() => {
-            countEl.style.transform = 'scale(1)';
-        }, 200);
-    }
-}
+elements.sellForm.addEventListener('submit', handleSellSubmit);
+
+wireTabs();
+populateLocationFilter();
+updateStats();
+renderServices();
