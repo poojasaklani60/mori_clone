@@ -2,107 +2,94 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home | The eternal warmth of Pahad</title>
-  <meta name="description" content="New Arrivals Featured Products">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>LocalLift Mobile | Local Services Marketplace</title>
+  <meta name="description" content="Mobile-first buy and sell marketplace app for local services.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="mini-label">Nearby services</p>
+        <h1>LocalLift</h1>
+      </div>
+      <button class="icon-pill" aria-label="Notifications">🔔</button>
+    </header>
 
-  <!-- Header Section -->
-  <header class="site-header">
-    <div class="header-container">
-      <div class="header-logo">
-        <a href="/">
-          <span class="logo-text">MORI</span>
-          <br>
-          <span class="logo-tagline">the eternal warmth of pahad</span>
-        </a>
-      </div>
-      
-      <nav class="header-nav">
-        <ul>
-          <li><a href="#" class="active">Home</a></li>
-          <li><a href="#">Products</a></li>
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Contact Us</a></li>
-        </ul>
-      </nav>
+    <main class="app-content">
+      <section id="homeTab" class="tab-screen active" aria-label="Home">
+        <article class="hero-card">
+          <h2>Book trusted local help in minutes.</h2>
+          <p>Find plumbers, tutors, cleaners and more from your area.</p>
+          <div class="hero-stats">
+            <div><strong id="activeListings">0</strong><span>Listings</span></div>
+            <div><strong id="openRequests">0</strong><span>Requests</span></div>
+            <div><strong>22m</strong><span>Avg reply</span></div>
+          </div>
+        </article>
 
-      <div class="header-utilities">
-        <button aria-label="Search" class="icon-btn search-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        </button>
-        <button aria-label="Account" class="icon-btn account-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-        </button>
-        <button aria-label="Cart" class="icon-btn cart-btn">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-          <span class="cart-count">0</span>
-        </button>
-      </div>
-    </div>
-  </header>
+        <section class="panel">
+          <h3>Find a service</h3>
+          <div class="filters">
+            <input type="text" id="searchInput" placeholder="Search services">
+            <select id="categoryFilter">
+              <option value="All">All categories</option>
+              <option value="Home Repair">Home Repair</option>
+              <option value="Education">Education</option>
+              <option value="Events">Events</option>
+              <option value="Wellness">Wellness</option>
+              <option value="Cleaning">Cleaning</option>
+              <option value="Tech">Tech</option>
+            </select>
+            <select id="locationFilter"><option value="All">All locations</option></select>
+            <select id="sortBy">
+              <option value="rating">Top rated</option>
+              <option value="price-low">Lowest price</option>
+              <option value="price-high">Highest price</option>
+            </select>
+          </div>
+        </section>
 
-  <!-- Main Content -->
-  <main class="site-main">
-    
-    <!-- Hero Slider Placeholder -->
-    <section class="hero-section">
-      <div class="hero-content">
-        <h1>Discover the Magic of the Mountains</h1>
-        <p>Explore our exclusive collection of art, decor, and accessories inspired by the Himalayas.</p>
-        <a href="#" class="btn btn-primary">Shop Now</a>
-      </div>
-    </section>
+        <section class="service-list" id="serviceGrid" aria-label="Service list"></section>
+      </section>
 
-    <!-- New Arrivals Container -->
-    <section class="new-arrivals">
-      <div class="container">
-        <h2 class="section-title">New Arrivals</h2>
-        <div class="product-grid" id="productGrid">
-          <!-- Products injected here via JS -->
-        </div>
-      </div>
-    </section>
+      <section id="sellTab" class="tab-screen" aria-label="Sell">
+        <section class="panel">
+          <h3>Create service listing</h3>
+          <p class="subtext">Get discovered by local customers.</p>
+          <form id="sellForm" class="sell-form">
+            <label>Service title<input type="text" id="title" required></label>
+            <label>Provider name<input type="text" id="provider" required></label>
+            <label>Category
+              <select id="category" required>
+                <option value="">Select category</option>
+                <option value="Home Repair">Home Repair</option>
+                <option value="Education">Education</option>
+                <option value="Events">Events</option>
+                <option value="Wellness">Wellness</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Tech">Tech</option>
+              </select>
+            </label>
+            <label>Location<input type="text" id="location" required></label>
+            <label>Price (NPR)<input type="number" id="price" min="1" required></label>
+            <label>Description<textarea id="description" rows="3" required></textarea></label>
+            <button type="submit" class="btn-primary">Publish</button>
+            <p id="formMessage" class="form-message" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+      </section>
+    </main>
 
-  </main>
-
-  <!-- Footer Section -->
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div class="footer-col brand-col">
-        <h3>MORI</h3>
-        <p>The eternal warmth of Pahad.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Products</h4>
-        <ul>
-          <li><a href="#">Accessories</a></li>
-          <li><a href="#">Art & Decor</a></li>
-          <li><a href="#">Stationery</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Quick Links</h4>
-        <ul>
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Contact Us</a></li>
-          <li><a href="#">Shipping Policy</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Contact Us</h4>
-        <p>hello@morilife.in</p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>Copyright &copy; 2026 MORI.</p>
-    </div>
-  </footer>
+    <nav class="bottom-nav" aria-label="Primary">
+      <button class="tab-btn active" data-target="homeTab">🏠<span>Home</span></button>
+      <button class="tab-btn" data-target="sellTab">➕<span>Sell</span></button>
+    </nav>
+  </div>
 
   <script src="script.js"></script>
 </body>
